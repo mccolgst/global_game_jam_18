@@ -1,0 +1,12 @@
+-shape fitting game, fit circles to send/receive messages/points?
+
+-satellite dishes 
+  - align them to end up at a goal
+  - 'sokoban style game'
+  - player pushes around, aligns sat dishes/guns/obstacles etc
+  - hits switch, message transmits to open to next level
+  - activate all dishes to proceed
+  - mirrors bounce signal
+
+-graph data type - transmit things from one to 
+
