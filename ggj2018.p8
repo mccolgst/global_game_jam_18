@@ -4,7 +4,7 @@ __lua__
 function _init()
   t=0
   mode=0
-  cam={dx=0,dy=0}
+  cam={x=0,y=0,dx=0,dy=0}
   player = {
     x=7,
     y=5,
@@ -123,6 +123,8 @@ function _init_level(level_idx)
   --    flr(level/8)*16
   local xstart = level*16%128
   local ystart = flr(level/8)*16
+  cam.x=xstart*8
+  cam.y=ystart*8
   for row=xstart,xstart+16 do
     for col=ystart,ystart+16 do
       if has(sat_sprites,
@@ -229,6 +231,7 @@ function won_level()
       return false
     end
   end
+  printh("we won!")
   return true
 end
 
@@ -239,13 +242,13 @@ end
 -->8
 function update_game()
   t+=1
-  camera()
-  printh("x: "..((level*16)%128).." y:"..flr(level/8)*16)
+  camera(cam.x,cam.y)
+  printh("x: "..((level*16)%128).." y:"..(flr(level/8)*16).." mget:"..mget((level*16%128),(flr(level/8)*16)))
   if mget(level*16%128,
          flr(level/8)*16) == 16 then
+    player.x=7
+    player.y=5
     mode+=1
-    player.x=4
-    player.y=4   
   end
   if choosing_angle and active_sat then
     if btnp(1) then
@@ -267,7 +270,7 @@ function update_game()
     if flr(rnd(2)) == 0 then
       cam.dy*=-1
     end
-    camera(cam.dx,cam.dy)
+    camera(cam.x+cam.dx,cam.y+cam.dy)
     if btnp(5) then
       reset_after_shot()
       shooting=false
@@ -320,10 +323,12 @@ end
 function draw_game()
   cls()
   rectfill(0,0,128,128,1)
-  map(level*16%128,
+  --[[ map(level*16%128,
       flr(level/8)*16, -- begin cells to draw
       0,0, -- screen pos
       16,16)  -- height/width
+  ]]--
+  map(0,0,0,0,128,128)
   --spr(1,player.x*8, player.y*8)
   spr(player.sprites[player.frame+1],
       player.x*8, player.y*8,
@@ -379,6 +384,7 @@ function draw_title_screen()
 end
 
 function update_won_game()
+  camera()
   t+=1
   -- animation
   player.t=(player.t+1)%player.step
@@ -389,7 +395,8 @@ end
 
 function draw_won_game()
   cls()
-  pretty_print("you won!",40,54+cos(t/30)*3, 1)
+  rectfill(0,0,128,128,1)
+  pretty_print("you won!",46,64+cos(t/30)*3, 1)
   spr(player.sprites[player.frame+1],
       player.x*8, player.y*8,
       1,1,
